@@ -1,10 +1,9 @@
-import sys
 import csv
+import sys
 import typing
 
-
-from typedef import Command, CommandPerson, Result, ShiftType
 from solver_schedule import ScheduleProblem
+from typedef import Command, CommandPerson, Result, ShiftType
 
 
 def read_request_csv(file_name: str) -> Command:
@@ -22,9 +21,7 @@ def write_shift_csv(file_name: str, result: Result) -> None:
     with open(file_name, "w") as csv_file:
         writer = csv.writer(csv_file)
         for person in result["persons"]:
-            writer.writerow(
-                [person["name"]] + list(map(ShiftType.to_str, person["shifts"]))
-            )
+            writer.writerow([person["name"]] + list(map(ShiftType.to_str, person["shifts"])))
 
 
 def main():

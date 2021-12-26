@@ -1,5 +1,5 @@
-import typing
 import enum
+from typing import List, TypedDict
 
 
 @enum.unique
@@ -17,20 +17,20 @@ class ShiftType(enum.IntEnum):
         return "休暇"
 
 
-class CommandPerson(typing.TypedDict):
+class CommandPerson(TypedDict):
     name: str
-    requests: typing.List[str]  # todo: 内部でEnumを定義する
+    requests: List[str]  # todo: 内部でEnumを定義する
 
 
-class Command(typing.TypedDict):
-    persons: typing.List[CommandPerson]
+class Command(TypedDict):
+    persons: List[CommandPerson]
 
 
-class ResultPerson(typing.TypedDict):
+class ResultPerson(TypedDict):
     name: str
-    shifts: typing.List[ShiftType]
+    shifts: List[ShiftType]
 
 
-class Result(typing.TypedDict):
+class Result(TypedDict):
     status: str
-    persons: typing.List[ResultPerson]
+    persons: List[ResultPerson]

@@ -1,7 +1,8 @@
 import typing
+
 from ortools.sat.python import cp_model
 
-from typedef import ShiftType, Command, Result, ResultPerson
+from typedef import Command, Result, ResultPerson, ShiftType
 
 
 class ScheduleProblem:
