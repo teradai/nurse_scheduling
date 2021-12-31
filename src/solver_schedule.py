@@ -2,7 +2,7 @@ import typing
 
 from ortools.sat.python import cp_model
 
-from typedef import Command, Result, ResultPerson, ShiftType
+from typedef import Command, HopeShiftType, Result, ResultPerson, ShiftType
 
 
 class ScheduleProblem:
@@ -58,6 +58,12 @@ class ScheduleProblem:
             )
 
         # 希望表に基づく制約
+        for i in range(self.__num_nurses):
+            for j in range(self.__num_days):
+                if command["persons"][i]["requests"][j] == HopeShiftType.RequireType:
+                    self.__model.Add(self.__x[(i, j, ShiftType.RestShift)] == 0)
+                if command["persons"][i]["requests"][j] == HopeShiftType.RestType:
+                    self.__model.Add(self.__x[(i, j, ShiftType.RestShift)] == 1)
 
         # 目的関数の追加
 
