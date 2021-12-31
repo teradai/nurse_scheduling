@@ -3,15 +3,32 @@ from typing import List, TypedDict
 
 
 @enum.unique
+class HopeShiftType(enum.Enum):
+    RequireType = 1
+    FreedType = 2
+    RestType = 3
+
+    @staticmethod
+    def from_str(hope_shift: str) -> "HopeShiftType":
+        if hope_shift == "o":
+            return HopeShiftType.RequireType
+        if hope_shift == "-":
+            return HopeShiftType.FreedType
+
+        return HopeShiftType.RestType
+
+
+@enum.unique
 class ShiftType(enum.IntEnum):
     EarlyShift = 0
     LateShift = 1
     RestShift = 2
 
-    def to_str(self):
-        if self is self.EarlyShift:
+    @staticmethod
+    def to_str(cls: "ShiftType") -> str:
+        if cls.value == ShiftType.EarlyShift:
             return "早番"
-        if self is self.LateShift:
+        if cls.value == ShiftType.LateShift:
             return "遅番"
 
         return "休暇"
@@ -19,7 +36,7 @@ class ShiftType(enum.IntEnum):
 
 class CommandPerson(TypedDict):
     name: str
-    requests: List[str]  # todo: 内部でEnumを定義する
+    requests: List[HopeShiftType]
 
 
 class Command(TypedDict):

@@ -3,7 +3,7 @@ import sys
 import typing
 
 from solver_schedule import ScheduleProblem
-from typedef import Command, CommandPerson, Result, ShiftType
+from typedef import Command, CommandPerson, HopeShiftType, Result, ShiftType
 
 
 def read_request_csv(file_name: str) -> Command:
@@ -11,7 +11,10 @@ def read_request_csv(file_name: str) -> Command:
         reader = csv.reader(csv_file)
         persons: typing.List[CommandPerson] = list()
         for info in reader:
-            person: CommandPerson = {"name": info[0], "requests": info[1:]}
+            person: CommandPerson = {
+                "name": info[0],
+                "requests": list(map(HopeShiftType.from_str, info[1:])),
+            }
             persons.append(person)
 
         return {"persons": persons}
