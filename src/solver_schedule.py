@@ -15,7 +15,7 @@ class ScheduleProblem:
         self.__num_days: int = len(command["persons"][0]["requests"])
         num_shifts: int = len(ShiftType)
 
-        # create variables.
+        # 変数の設定
         for i in range(self.__num_nurses):
             for j in range(self.__num_days):
                 for k in range(num_shifts):
@@ -23,19 +23,15 @@ class ScheduleProblem:
                         "shift_{}_{}_{}".format(command["persons"][i]["name"], j, k)
                     )
 
-        # Each nurse works one shift included rest per day.
+        # 全てのナースは(休暇を含む)必ず何かのシフトが割り当てられる
         for i in range(self.__num_nurses):
             for j in range(self.__num_days):
-                self.__model.Add(
-                    sum(self.__x[(i, j, k)] for k in range(num_shifts)) == 1
-                )
+                self.__model.Add(sum(self.__x[(i, j, k)] for k in range(num_shifts)) == 1)
 
-        # There are all work shifts(not rest) per day
+        # 全ての日にちにおいて休暇以外のシフトが必ず一人いる
         for j in range(self.__num_days):
             for k in range(num_shifts - 1):
-                self.__model.Add(
-                    sum(self.__x[(i, j, k)] for i in range(self.__num_nurses)) == 1
-                )
+                self.__model.Add(sum(self.__x[(i, j, k)] for i in range(self.__num_nurses)) == 1)
 
         # 連勤の制約
 
