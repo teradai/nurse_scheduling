@@ -33,7 +33,13 @@ class ScheduleProblem:
             for k in range(num_shifts - 1):
                 self.__model.Add(sum(self.__x[(i, j, k)] for i in range(self.__num_nurses)) == 1)
 
-        # 連勤の制約
+        # 全てのナースにおいて、5連勤以上を禁止する( 連続する5日間において必ず休みが存在する )
+        for i in range(self.__num_nurses):
+            for j in range(self.__num_days):
+                # todo: 前月のシフトも考慮できるようにする
+                if j <= 4:
+                    continue
+                self.__model.Add(sum(self.__x[(i, j - h, ShiftType.RestShift)] for h in range(0, 5)) >= 1)
 
         # 均等化の制約
 
