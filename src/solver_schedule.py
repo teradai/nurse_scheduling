@@ -41,7 +41,21 @@ class ScheduleProblem:
                     continue
                 self.__model.Add(sum(self.__x[(i, j - h, ShiftType.RestShift)] for h in range(0, 5)) >= 1)
 
-        # 均等化の制約
+        # なるべく勤務日数を平等にしたい -> 休暇数を平等にしたい
+        all_rest_num: int = (self.__num_nurses - num_shifts + 1) * self.__num_days
+        min_rest_per_nurse: int = all_rest_num // self.__num_nurses
+        if all_rest_num % self.__num_nurses == 0:
+            max_rest_per_nurse = min_rest_per_nurse
+        else:
+            max_rest_per_nurse = min_rest_per_nurse + 1
+
+        for i in range(self.__num_nurses):
+            self.__model.Add(
+                sum(self.__x[(i, j, ShiftType.RestShift)] for j in range(self.__num_days)) >= min_rest_per_nurse
+            )
+            self.__model.Add(
+                sum(self.__x[(i, j, ShiftType.RestShift)] for j in range(self.__num_days)) <= max_rest_per_nurse
+            )
 
         # 希望表に基づく制約
 
