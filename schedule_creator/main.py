@@ -1,9 +1,14 @@
 import csv
 import sys
 import typing
-
-from solver_schedule import ScheduleProblem
-from typedef import Command, CommandPerson, HopeShiftType, Result, ShiftType
+from schedule_creator.solve_schedule import ScheduleProblem
+from schedule_creator.typedef import (
+    Command,
+    CommandPerson,
+    HopeShiftType,
+    Result,
+    ShiftType,
+)
 
 
 def read_request_csv(file_name: str) -> Command:

@@ -2,7 +2,13 @@ import typing
 
 from ortools.sat.python import cp_model
 
-from typedef import Command, HopeShiftType, Result, ResultPerson, ShiftType
+from schedule_creator.typedef import (
+    Command,
+    HopeShiftType,
+    Result,
+    ResultPerson,
+    ShiftType,
+)
 
 
 class ScheduleProblem:
@@ -26,12 +32,16 @@ class ScheduleProblem:
         # 全てのナースは(休暇を含む)必ず何かのシフトが割り当てられる
         for i in range(self.__num_nurses):
             for j in range(self.__num_days):
-                self.__model.Add(sum(self.__x[(i, j, k)] for k in range(num_shifts)) == 1)
+                self.__model.Add(
+                    sum(self.__x[(i, j, k)] for k in range(num_shifts)) == 1
+                )
 
         # 全ての日にちにおいて休暇以外のシフトが必ず一人いる
         for j in range(self.__num_days):
             for k in range(num_shifts - 1):
-                self.__model.Add(sum(self.__x[(i, j, k)] for i in range(self.__num_nurses)) == 1)
+                self.__model.Add(
+                    sum(self.__x[(i, j, k)] for i in range(self.__num_nurses)) == 1
+                )
 
         # 全てのナースにおいて、5連勤以上を禁止する( 連続する5日間において必ず休みが存在する )
         for i in range(self.__num_nurses):
@@ -39,7 +49,10 @@ class ScheduleProblem:
                 # todo: 前月のシフトも考慮できるようにする
                 if j <= 4:
                     continue
-                self.__model.Add(sum(self.__x[(i, j - h, ShiftType.RestShift)] for h in range(0, 5)) >= 1)
+                self.__model.Add(
+                    sum(self.__x[(i, j - h, ShiftType.RestShift)] for h in range(0, 5))
+                    >= 1
+                )
 
         # なるべく勤務日数を平等にしたい -> 休暇数を平等にしたい
         all_rest_num: int = (self.__num_nurses - num_shifts + 1) * self.__num_days
@@ -51,10 +64,18 @@ class ScheduleProblem:
 
         for i in range(self.__num_nurses):
             self.__model.Add(
-                sum(self.__x[(i, j, ShiftType.RestShift)] for j in range(self.__num_days)) >= min_rest_per_nurse
+                sum(
+                    self.__x[(i, j, ShiftType.RestShift)]
+                    for j in range(self.__num_days)
+                )
+                >= min_rest_per_nurse
             )
             self.__model.Add(
-                sum(self.__x[(i, j, ShiftType.RestShift)] for j in range(self.__num_days)) <= max_rest_per_nurse
+                sum(
+                    self.__x[(i, j, ShiftType.RestShift)]
+                    for j in range(self.__num_days)
+                )
+                <= max_rest_per_nurse
             )
 
         # 希望表に基づく制約
