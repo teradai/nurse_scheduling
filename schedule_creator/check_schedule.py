@@ -1,7 +1,7 @@
 import sys
 import typing
 
-from schedule_creator.typedef import CommandPerson, ResultPerson, ShiftType
+from schedule_creator.typedef import CommandPerson, HopeShiftType, ResultPerson, ShiftType
 
 
 # memo: personはこの関数で回す
@@ -85,7 +85,27 @@ def check_rest_day_num_equalized_per_nurse(
 
 # 希望表通りのスケジュールでない箇所を列挙する
 def check_all_nurse_hoping_schedule(
-    command_person: typing.List[CommandPerson],
+    command_persons: typing.List[CommandPerson],
     result_persons: typing.List[ResultPerson],
-) -> bool:
-    pass
+) -> typing.Dict[str, typing.Set[int]]:
+
+    check_result: typing.Dict[str, typing.Set[int]] = dict()
+    for command, result in zip(command_persons, result_persons):
+        assert command["name"] == result["name"]
+
+        for day, (hoping_shift, result_shift) in enumerate(zip(command["requests"], result["shifts"])):
+            if hoping_shift == HopeShiftType.FreedType:
+                continue
+
+            if hoping_shift == HopeShiftType.RestType and result_shift == ShiftType.RestShift:
+                continue
+
+            if hoping_shift == HopeShiftType.RequireType and result_shift != ShiftType.RestShift:
+                continue
+
+            if command["name"] not in check_result.keys():
+                check_result[command["name"]] = set()
+
+            check_result[command["name"]].add(day)
+
+    return check_result
