@@ -1,12 +1,38 @@
 import typing
 
-from schedule_creator.check_schedule import check_all_nurse_assigned_shift
-from schedule_creator.typedef import ResultPerson
+from schedule_creator.check_schedule import check_all_nurse_working_four_days_or_less
+from schedule_creator.typedef import ResultPerson, ShiftType
 
 
-def test_check_all_nurse_assigned_shift():
+def test_check_all_nurse_working_four_days_or_less():
     persons: typing.List[ResultPerson] = list()
-    persons.append({"name": "one", "shifts": [0, 1]})
-    persons.append({"name": "two", "shifts": [2, 2]})
 
-    # assert check_all_nurse_assigned_shift(persons) is True
+    persons.append(
+        {
+            "name": "one",
+            "shifts": [
+                ShiftType.EarlyShift,
+                ShiftType.EarlyShift,
+                ShiftType.RestShift,
+                ShiftType.LateShift,
+                ShiftType.LateShift,
+                ShiftType.LateShift,
+            ],
+        }
+    )
+    assert check_all_nurse_working_four_days_or_less(persons) == set()
+
+    persons.append(
+        {
+            "name": "two",
+            "shifts": [
+                ShiftType.EarlyShift,
+                ShiftType.EarlyShift,
+                ShiftType.EarlyShift,
+                ShiftType.LateShift,
+                ShiftType.LateShift,
+                ShiftType.LateShift,
+            ],
+        }
+    )
+    assert check_all_nurse_working_four_days_or_less(persons) == set(["two"])
