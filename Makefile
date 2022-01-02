@@ -6,7 +6,7 @@ format:
 
 .PHONY: exec
 exec:
-	python -m schedule_creator.main sample1/shift_request.csv result/result_shift.csv
+	python -m schedule_creator.main sample1/shift_request.csv result/result_shift.csv result/constraint_violation.txt
 
 .PHONY: test
 test:
