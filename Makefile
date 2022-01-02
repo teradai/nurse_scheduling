@@ -1,8 +1,8 @@
 
 .PHONY: format
 format: 
-	isort schedule_creator
-	black schedule_creator
+	isort schedule_creator tests
+	black schedule_creator tests
 
 .PHONY: exec
 exec:
