@@ -112,6 +112,8 @@ def main():
     result: Result = problem.solve_problem()
     print("optimize_status_code:{}".format(result["status"]))
 
+    write_shift_csv(result_shift, result)
+
     str_io: io.StringIO = extract_from_constraint_violation(command, result)
     write_text(constraint_violation, str_io)
 
