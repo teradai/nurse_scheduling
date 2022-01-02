@@ -12,11 +12,25 @@ def check_schedule(
     pass
 
 
-# 一日あたりに休暇以外の全てのシフトが存在する
+# 休暇以外のシフトが一つでも存在しない日を列挙する
 def check_all_shift_exsisting_per_day(
     result_persons: typing.List[ResultPerson],
-) -> bool:
-    pass
+) -> typing.Dict[int, typing.Set[ShiftType]]:
+
+    day_dict: typing.Dict[int, typing.Set[ShiftType]] = dict()
+    for person in result_persons:
+        for day, shift in enumerate(person["shifts"]):
+            if shift != ShiftType.RestShift:
+                if day not in day_dict.keys():
+                    day_dict[day] = set()
+                day_dict[day].add(shift)
+
+    result: typing.Dict[int, typing.Set[ShiftType]] = dict()
+    for day, shifts in day_dict.items():
+        if len(shifts) != len(ShiftType) - 1:
+            result[day] = shifts
+
+    return result
 
 
 # 5連勤以上しているナースを連勤数と共に列挙する
@@ -43,7 +57,7 @@ def check_all_nurse_working_four_days_or_less(
     return violations
 
 
-# なるべく勤務日数を平等にしたい -> 休暇数を平等にしたい
+# 休暇数を平等でなければ、その中で休暇数差分最大のナースペアを抽出
 def check_rest_day_num_equalized_per_nurse(
     result_persons: typing.List[ResultPerson],
 ) -> typing.Set[typing.Tuple[str, int]]:
@@ -69,7 +83,7 @@ def check_rest_day_num_equalized_per_nurse(
     return result
 
 
-# 希望表通りのスケジュールか?
+# 希望表通りのスケジュールでない箇所を列挙する
 def check_all_nurse_hoping_schedule(
     command_person: typing.List[CommandPerson],
     result_persons: typing.List[ResultPerson],

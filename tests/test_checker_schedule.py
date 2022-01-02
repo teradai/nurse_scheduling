@@ -2,9 +2,50 @@ import typing
 
 from schedule_creator.check_schedule import (
     check_all_nurse_working_four_days_or_less,
+    check_all_shift_exsisting_per_day,
     check_rest_day_num_equalized_per_nurse,
 )
 from schedule_creator.typedef import ResultPerson, ShiftType
+
+
+def test_check_all_shift_exsisting_per_day():
+    persons: typing.List[ResultPerson] = list()
+
+    persons.append(
+        {
+            "name": "one",
+            "shifts": [
+                ShiftType.EarlyShift,
+                ShiftType.EarlyShift,
+            ],
+        }
+    )
+    assert check_all_shift_exsisting_per_day(persons) == {
+        0: {ShiftType.EarlyShift},
+        1: {ShiftType.EarlyShift},
+    }
+
+    persons.append(
+        {
+            "name": "two",
+            "shifts": [
+                ShiftType.LateShift,
+                ShiftType.EarlyShift,
+            ],
+        }
+    )
+    assert check_all_shift_exsisting_per_day(persons) == {1: {ShiftType.EarlyShift}}
+
+    persons.append(
+        {
+            "name": "three",
+            "shifts": [
+                ShiftType.LateShift,
+                ShiftType.LateShift,
+            ],
+        }
+    )
+    assert check_all_shift_exsisting_per_day(persons) == dict()
 
 
 def test_check_all_nurse_working_four_days_or_less():
