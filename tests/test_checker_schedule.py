@@ -20,7 +20,7 @@ def test_check_all_nurse_working_four_days_or_less():
             ],
         }
     )
-    assert check_all_nurse_working_four_days_or_less(persons) == set()
+    assert check_all_nurse_working_four_days_or_less(persons) == dict()
 
     persons.append(
         {
@@ -35,4 +35,4 @@ def test_check_all_nurse_working_four_days_or_less():
             ],
         }
     )
-    assert check_all_nurse_working_four_days_or_less(persons) == set(["two"])
+    assert check_all_nurse_working_four_days_or_less(persons) == {"two": 6}

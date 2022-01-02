@@ -18,11 +18,12 @@ def check_all_shift_exsisting_per_day(
 # 全てのナースにおいて、5連勤以上を禁止する( 連続する5日間において必ず休みが存在する )
 def check_all_nurse_working_four_days_or_less(
     result_persons: typing.List[ResultPerson],
-) -> typing.Set[str]:
+) -> typing.Dict[str, int]:
 
-    violations: typing.Set[str] = set()
+    violations: typing.Dict[str, int] = dict()
     for person in result_persons:
         work_count: int = 0
+        max_count: int = 0
         for shift in person["shifts"]:
             if shift == ShiftType.RestShift:
                 work_count = 0
@@ -30,8 +31,10 @@ def check_all_nurse_working_four_days_or_less(
             else:
                 work_count += 1
 
-            if work_count == 5:
-                violations.add(person["name"])
+            max_count = max(max_count, work_count)
+
+        if max_count >= 5:
+            violations[person["name"]] = max_count
 
     return violations
 
