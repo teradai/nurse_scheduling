@@ -1,12 +1,17 @@
 import typing
 
 from schedule_creator.check_schedule import (
+    check_all_nurse_hoping_schedule,
     check_all_nurse_working_four_days_or_less,
     check_all_shift_exsisting_per_day,
     check_rest_day_num_equalized_per_nurse,
-    check_all_nurse_hoping_schedule,
 )
-from schedule_creator.typedef import CommandPerson, HopeShiftType, ResultPerson, ShiftType
+from schedule_creator.typedef import (
+    CommandPerson,
+    HopeShiftType,
+    ResultPerson,
+    ShiftType,
+)
 
 
 def test_check_all_shift_exsisting_per_day():
@@ -183,7 +188,10 @@ def test_check_all_nurse_hoping_schedule():
         }
     )
 
-    assert check_all_nurse_hoping_schedule(command_persons1, result_persons1) == {"one": {0, 1}, "two": {0}}
+    assert check_all_nurse_hoping_schedule(command_persons1, result_persons1) == {
+        "one": {0, 1},
+        "two": {0},
+    }
 
     command_persons2: typing.List[CommandPerson] = list()
     result_persons2: typing.List[ResultPerson] = list()
