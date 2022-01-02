@@ -36,3 +36,18 @@ def test_check_all_nurse_working_four_days_or_less():
         }
     )
     assert check_all_nurse_working_four_days_or_less(persons) == {"two": 6}
+
+    persons.append(
+        {
+            "name": "three",
+            "shifts": [
+                ShiftType.LateShift,
+                ShiftType.LateShift,
+                ShiftType.LateShift,
+                ShiftType.LateShift,
+                ShiftType.LateShift,
+                ShiftType.RestShift,
+            ],
+        }
+    )
+    assert check_all_nurse_working_four_days_or_less(persons) == {"two": 6, "three": 5}
