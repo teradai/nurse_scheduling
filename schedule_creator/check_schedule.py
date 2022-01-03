@@ -114,3 +114,31 @@ def check_all_nurse_hoping_schedule(
             check_result[command["name"]].add(day)
 
     return check_result
+
+
+# 夜勤に関する順序制約を違反している
+def check_shift_order_for_night_shift(
+    result_persons: typing.List[ResultPerson],
+) -> typing.Set[str]:
+    violations_names: typing.Set[str] = set()
+    for person in result_persons:
+        # memo: 最終日が夜入、夜明の場合は最終日のチェックを外す
+        shifts = person["shifts"]
+        name = person["name"]
+        for i in range(len(shifts) - 1):
+            if shifts[i] == ShiftType.PreNightShift:
+                if shifts[i + 1] == ShiftType.PostNightShift:
+                    continue
+                violations_names.add(name)
+
+            if shifts[i] == ShiftType.PostNightShift:
+                if shifts[i + 1] == ShiftType.RestShift:
+                    continue
+                violations_names.add(name)
+
+            if shifts[i + 1] == ShiftType.PostNightShift:
+                if shifts[i] == ShiftType.PreNightShift:
+                    continue
+                violations_names.add(name)
+
+    return violations_names

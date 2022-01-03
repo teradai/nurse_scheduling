@@ -8,6 +8,7 @@ from schedule_creator.check_schedule import (
     check_all_nurse_working_four_days_or_less,
     check_all_shift_exsisting_per_day,
     check_rest_day_num_equalized_per_nurse,
+    check_shift_order_for_night_shift,
 )
 from schedule_creator.solve_schedule import ScheduleProblem
 from schedule_creator.typedef import (
@@ -86,6 +87,13 @@ def extract_from_constraint_violation(command: Command, result: Result) -> io.St
                 )
             )
     del check_result4
+
+    check_result5: typing.Set[str] = check_shift_order_for_night_shift(
+        result["persons"]
+    )
+    if check_result5:
+        for name in check_result5:
+            str_io.write("{}さんの夜勤に関するシフトの順序が違反しています".format(name))
 
     return str_io
 

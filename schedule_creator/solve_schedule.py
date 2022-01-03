@@ -86,6 +86,24 @@ class ScheduleProblem:
                 if command["persons"][i]["requests"][j] == HopeShiftType.RestType:
                     self.__model.Add(self.__x[(i, j, ShiftType.RestShift)] == 1)
 
+        # 夜勤に関する制約
+        for i in range(self.__num_nurses):
+            for j in range(self.__num_days):
+                # todo: 前月のシフトも考慮できるようにする
+                if j == 0:
+                    continue
+
+                self.__model.Add(
+                    self.__x[i, j, ShiftType.RestShift]
+                    - self.__x[i, j - 1, ShiftType.PostNightShift]
+                    >= 0
+                )
+                self.__model.Add(
+                    self.__x[i, j, ShiftType.PostNightShift]
+                    - self.__x[i, j - 1, ShiftType.PreNightShift]
+                    >= 0
+                )
+
         # 目的関数の追加
 
     def solve_problem(self) -> Result:

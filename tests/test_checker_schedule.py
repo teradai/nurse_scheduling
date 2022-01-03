@@ -5,6 +5,7 @@ from schedule_creator.check_schedule import (
     check_all_nurse_working_four_days_or_less,
     check_all_shift_exsisting_per_day,
     check_rest_day_num_equalized_per_nurse,
+    check_shift_order_for_night_shift,
 )
 from schedule_creator.typedef import (
     CommandPerson,
@@ -40,14 +41,44 @@ def test_check_all_shift_exsisting_per_day():
             ],
         }
     )
-    assert check_all_shift_exsisting_per_day(persons) == {1: {ShiftType.EarlyShift}}
+    assert check_all_shift_exsisting_per_day(persons) == {
+        0: {ShiftType.EarlyShift, ShiftType.LateShift},
+        1: {ShiftType.EarlyShift},
+    }
 
     persons.append(
         {
             "name": "three",
             "shifts": [
+                ShiftType.PreNightShift,
                 ShiftType.LateShift,
-                ShiftType.LateShift,
+            ],
+        }
+    )
+    assert check_all_shift_exsisting_per_day(persons) == {
+        0: {ShiftType.EarlyShift, ShiftType.LateShift, ShiftType.PreNightShift},
+        1: {ShiftType.EarlyShift, ShiftType.LateShift},
+    }
+
+    persons.append(
+        {
+            "name": "three",
+            "shifts": [
+                ShiftType.PostNightShift,
+                ShiftType.PreNightShift,
+            ],
+        }
+    )
+    assert check_all_shift_exsisting_per_day(persons) == {
+        1: {ShiftType.EarlyShift, ShiftType.LateShift, ShiftType.PreNightShift},
+    }
+
+    persons.append(
+        {
+            "name": "three",
+            "shifts": [
+                ShiftType.RestShift,
+                ShiftType.PostNightShift,
             ],
         }
     )
@@ -237,3 +268,77 @@ def test_check_all_nurse_hoping_schedule():
     )
 
     assert check_all_nurse_hoping_schedule(command_persons2, result_persons2) == dict()
+
+
+def test_check_shift_order_for_night_shift():
+    persons: typing.List[ResultPerson] = list()
+
+    persons.append(
+        {
+            "name": "one",
+            "shifts": [
+                ShiftType.EarlyShift,
+                ShiftType.EarlyShift,
+                ShiftType.LateShift,
+                ShiftType.RestShift,
+            ],
+        }
+    )
+
+    assert check_shift_order_for_night_shift(persons) == set()
+
+    persons.append(
+        {
+            "name": "two",
+            "shifts": [
+                ShiftType.EarlyShift,
+                ShiftType.PreNightShift,
+                ShiftType.PostNightShift,
+                ShiftType.RestShift,
+            ],
+        }
+    )
+
+    assert check_shift_order_for_night_shift(persons) == set()
+
+    persons.append(
+        {
+            "name": "three",
+            "shifts": [
+                ShiftType.EarlyShift,
+                ShiftType.PreNightShift,
+                ShiftType.PostNightShift,
+                ShiftType.LateShift,
+            ],
+        }
+    )
+
+    assert check_shift_order_for_night_shift(persons) == {"three"}
+
+    persons.append(
+        {
+            "name": "four",
+            "shifts": [
+                ShiftType.EarlyShift,
+                ShiftType.PostNightShift,
+                ShiftType.RestShift,
+                ShiftType.EarlyShift,
+            ],
+        }
+    )
+
+    assert check_shift_order_for_night_shift(persons) == {"three", "four"}
+
+    persons.append(
+        {
+            "name": "five",
+            "shifts": [
+                ShiftType.EarlyShift,
+                ShiftType.PreNightShift,
+                ShiftType.RestShift,
+                ShiftType.EarlyShift,
+            ],
+        }
+    )
+
+    assert check_shift_order_for_night_shift(persons) == {"three", "four", "five"}
