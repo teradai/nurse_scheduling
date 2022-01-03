@@ -22,7 +22,9 @@ class HopeShiftType(enum.Enum):
 class ShiftType(enum.IntEnum):
     EarlyShift = 0
     LateShift = 1
-    RestShift = 2
+    PreNightShift = 2
+    PostNightShift = 3
+    RestShift = enum.auto()
 
     @staticmethod
     def to_str(cls: "ShiftType") -> str:
@@ -30,6 +32,10 @@ class ShiftType(enum.IntEnum):
             return "早番"
         if cls.value == ShiftType.LateShift:
             return "遅番"
+        if cls.value == ShiftType.PreNightShift:
+            return "夜入"
+        if cls.value == ShiftType.PostNightShift:
+            return "夜明"
 
         return "休暇"
 
